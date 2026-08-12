@@ -17,6 +17,9 @@ export function DropZone({ onStateChange }: DropZoneProps) {
   
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // DYNAMIC API URL: Reads Vercel env variable in production, falls back to localhost for dev
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
   const handleFile = (f: File) => {
     if (!["image/jpeg", "image/png"].includes(f.type)) return;
     setFile(f);
@@ -40,7 +43,8 @@ export function DropZone({ onStateChange }: DropZoneProps) {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/predict", {
+      // DYNAMIC FETCH: Connects seamlessly to both cloud and local API
+      const response = await fetch(`${API_BASE_URL}/predict`, {
         method: "POST",
         body: formData,
       });

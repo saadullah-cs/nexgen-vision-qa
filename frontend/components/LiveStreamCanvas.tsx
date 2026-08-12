@@ -81,8 +81,11 @@ export function LiveStreamCanvas({ onTelemetryUpdate }: LiveStreamCanvasProps) {
           videoRef.current.play().catch(() => {});
         }
 
+        // Dynamic WS URL: Uses Vercel's wss:// variable on the cloud, falls back to ws:// locally
+        const WS_BASE_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://127.0.0.1:8000";
+
         // 4. Ignite WebSocket ONLY after optics are secured
-        ws = new WebSocket("ws://127.0.0.1:8000/ws/stream");
+        ws = new WebSocket(`${WS_BASE_URL}/ws/stream`);
         wsRef.current = ws;
 
         ws.onopen = () => {
