@@ -1,0 +1,35 @@
+# =========================
+# NexGen Vision QA - Master Ignore
+# =========================
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+venv/
+env/
+.env/
+.venv/
+
+# Next.js Build Output
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Python Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS Files
+.DS_Store
+Thumbs.db

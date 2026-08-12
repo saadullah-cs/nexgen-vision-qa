@@ -1,0 +1,23 @@
+# defect-detection-web/Dockerfile.backend
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install system dependencies required for OpenCV
+RUN apt-get update && apt-get install -y \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy ONNX models and application source code
+COPY models/ ./models/
+COPY *.py .
+
+# Expose the ASGI port for both HTTP and WebSockets
+EXPOSE 8000
+
+# Ignite the FastAPI server
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
