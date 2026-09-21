@@ -1,0 +1,317 @@
+<!-- Base design and slide mechanics adapted from the original presentation -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexGen QA Presentation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        :root {
+            var(--bg-color): #0b0f19; 
+            --text-main: #ffffff;
+            --text-muted: #cbd5e1; 
+            --accent: #e11d48;
+            --accent-glow: rgba(225, 29, 72, 0.45);
+            --cyan-glow: rgba(56, 189, 248, 0.45);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.25; 
+            filter: contrast(1.2) grayscale(0.4);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .background-glow {
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 55vw;
+            height: 55vw;
+            background: radial-gradient(circle, var(--cyan-glow) 0%, transparent 65%);
+            mix-blend-mode: screen;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .background-glow-2 {
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 55vw;
+            height: 55vw;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 65%);
+            mix-blend-mode: screen;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .slides-container {
+            display: flex;
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            height: 100vh;
+            width: 100vw;
+            z-index: 1;
+            position: relative;
+        }
+
+        .slide {
+            min-width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 3.5rem 4.5rem;
+            max-width: 950px;
+            width: 100%;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+            
+            transform: translateY(40px) scale(0.95);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            transition-delay: 0.1s;
+        }
+
+        .slide.active .glass-card {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        p, li {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+        }
+
+        li {
+            margin-bottom: 0.85rem;
+        }
+
+        .highlight {
+            color: #fb7185; 
+            font-weight: 600;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 0.75rem;
+            margin-bottom: 1.5rem;
+            color: #f8fafc;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, var(--accent));
+            z-index: 20;
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar" id="progress"></div>
+    <div class="background-glow"></div>
+    <div class="background-glow-2"></div>
+
+    <div class="slides-container" id="slider">
+        
+        <!-- Slide 1: Intro -->
+        <div class="slide active">
+            <div class="glass-card">
+                <span class="tag">NexGen QA</span>
+                <span class="tag">Live Detection</span>
+                <h1>Smart Circuit Board Inspection</h1>
+                <p>A live camera system to spot manufacturing errors instantly.</p>
+                <br><br>
+                <p style="color: #f1f5f9;"><strong>Presented by:</strong> Saad Ullah</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: The Problem -->
+        <div class="slide">
+            <div class="glass-card">
+                <h2>The Problem</h2>
+                <p>Checking electronics by hand on a fast factory line is very difficult:</p>
+                <ul>
+                    <li><strong>Human Eyes Get Tired:</strong> It is easy for a person to miss a tiny scratch or a broken wire after hours of working.</li>
+                    <li><strong>Speed:</strong> Factory lines move too fast for manual checking.</li>
+                    <li><strong>Old Software:</strong> Traditional computer programs often freeze or lag when trying to process live video.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: The Solution -->
+        <div class="slide">
+            <div class="glass-card">
+                <h2>The Solution</h2>
+                <p>We built a smart camera system to check Printed Circuit Boards (PCBs) automatically.</p>
+                <ul>
+                    <li>We showed the computer examples of 6 common mistakes (like a missing hole or a broken connection).</li>
+                    <li>The system studied these images and learned exactly what the mistakes look like.</li>
+                    <li>Now, it can scan a live video and spot those exact problems in milliseconds.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: The Magic -->
+        <div class="slide">
+            <div class="glass-card">
+                <h2>How It Works</h2>
+                <p>When a circuit board is placed under the camera:</p>
+                <ol>
+                    <li>The live video is sent to our fast cloud server.</li>
+                    <li>The system scans every single frame of the video as it happens.</li>
+                    <li>If it sees a mistake, it draws a <span class="highlight">colored box</span> right on top of it on the screen and tells us what the error is.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 5: The Architecture -->
+        <div class="slide">
+            <div class="glass-card">
+                <h2>The Software Behind It</h2>
+                <p>To make the video run smoothly without freezing, the software is split into two parts:</p>
+                <ul>
+                    <li><span class="highlight">The Dashboard (Website):</span> A clean, easy-to-use screen that turns on the camera and shows the live results.</li>
+                    <li><span class="highlight">The Brain (Server):</span> A fast backend that does all the heavy math.</li>
+                    <li>They talk to each other instantly using a continuous live connection, ensuring there is zero lag.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Future Scaling -->
+        <div class="slide">
+            <div class="glass-card">
+                <h2>Looking Forward</h2>
+                <p>This system is built to be flexible. Right now it checks circuit boards, but we can easily teach it to check other things just by showing it new pictures:</p>
+                <ul>
+                    <li>Cracks in <strong>Solar Panels</strong>.</li>
+                    <li>Scratches on <strong>Car Parts</strong>.</li>
+                    <li>Bad seals on <strong>Food Packaging</strong>.</li>
+                </ul>
+                <h3 style="margin-top: 2.5rem; font-size: 2rem; color: #ffffff;">Thank You.</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const slider = document.getElementById('slider');
+        const progressBar = document.getElementById('progress');
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentSlide * 100}vw)`;
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlider();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlider();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if(e.clientX > window.innerWidth * 0.25) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        updateSlider();
+    </script>
+</body>
+</html>
